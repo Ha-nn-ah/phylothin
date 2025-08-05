@@ -41,7 +41,7 @@ Analyses in R. Bioinformatics 35: 526-528.
 ## Step 2: Clone GitHub-Repository
 
 ```
-git clone https://github.com/fbaumdicker/PhyloThin.git
+git clone https://github.com/fbaumdicker/phylothin.git
 cd PhyloThin
 ```
 
