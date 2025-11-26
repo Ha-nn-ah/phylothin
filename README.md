@@ -42,7 +42,7 @@ Analyses in R. Bioinformatics 35: 526-528.
 
 ```
 git clone https://github.com/fbaumdicker/phylothin.git
-cd PhyloThin
+cd phylothin
 ```
 
 ## Step 3: Additional Requirements
