@@ -2,6 +2,8 @@
 
 # *PhyloThin* 
 
+!!! THIS IS A PRELIMINARY VERSION !!! Feel free to explore :) Feedback is welcome.
+
 This github repository provides the R-script *PhyloThin*. The preprint will be available soon (and anounced here).
 
 With *PhyloThin*, we present a fully automated statistical tool that can detect and correct for sampling bias in prokaryotic populations. Removing the strong sampling bias of bacteria allows to identify the effective amount of information and prevents misleading biased conclusions in various analysis.
