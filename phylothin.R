@@ -145,6 +145,9 @@ save_tree <- um_tree # save the initial (ultrametric) tree
 
 ## scale the tree to coalescent based on T_i for i in a subset of {2, ..., k}
 
+if (is.binary(um_tree) == F){ # test if the tree is binary
+  um_tree <- multi2di(um_tree) # transform tree into binary by adding branches of length zero
+}
 num_start <- um_tree$Nnode+1 # number of nodes + 1 (m+1; binary tree = number of samples n)
 cintervals <- coalescent.intervals(um_tree) # information about coalescent intervals
                                            # (number of lineages, interval lengths, interval count, total depth)
@@ -476,7 +479,7 @@ pdf(paste(basepath, "/phylothinoutput/um_treecomparison_", tree_name, ".pdf", se
   par(mfrow = c(1,2)) # create a 1 x 2 plotting matrix
   plot(save_tree, show.tip.label = F, main = warning, sub = tree_name) # plot initial tree
   tiplabels(tip = removed_ones, col = "red" , pch = 4) # add red X at tips (initial tree) which have been removed
-  plot(um_tree, show.tip.label = F,  # plot final tree
+  plot(drop.tip(save_tree, tip = removed_labels), show.tip.label = F,  # plot final tree
      main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
 dev.off()
 # input-tree:
