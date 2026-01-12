@@ -20,9 +20,11 @@ alpha_4 <- 0.9
 
 #### INPUT ########################################################################################################
 
-library(ape) # package for the analysis of phylogenetics and evolution
-library(phangorn) # for nnls.tree() and cophenetic.phylo()
-library(dplyr) # for near()
+suppressPackageStartupMessages({
+  library(ape) # package for the analysis of phylogenetics and evolution
+  library(phangorn) # for nnls.tree() and cophenetic.phylo()
+  library(dplyr) # for near()
+})
 
 # extract command-line arguments:
 args <- commandArgs(trailingOnly=TRUE)
@@ -221,7 +223,7 @@ pdf(paste(basepath, "/phylothinoutput/check/treecutting_", tree_name, ".pdf", se
   revcs_ctimes <- cumsum(rev(ctimes)) # cumulative sums for reversed ctimes (starting from root)
   plot(pgamma(revcs_ctimes,1:length(revcs_ctimes)), ylab = "pgamma(cumsum(choose(i,2) T_i))", 
        xlab = "summation starts from root") 
-dev.off()
+invisible(dev.off())
 
 ###################################################################################################################
 #### REMOVE SAMPLES ###############################################################################################
@@ -439,8 +441,8 @@ legend( x="topright",
         legend=c("T_i=0","T_i used for scaling","scaling factor",
                  "bound defined through f_i","bound defined through pgamma", "removed"), 
         col=c("black","blue","blue","green","darkgreen","red"), lwd=1,
-        lty=c(0,0,1,1,1,1), pch=c(1,16,26,26,26,4), merge=FALSE )
-dev.off() # close the plotting device
+        lty=c(0,0,1,1,1,1), pch=c(1,16,NA,NA,NA,4), merge=FALSE )
+invisible(dev.off()) # close the plotting device
 
 ###################################################################################################################
 #### OUTPUT #######################################################################################################
@@ -481,7 +483,7 @@ pdf(paste(basepath, "/phylothinoutput/um_treecomparison_", tree_name, ".pdf", se
   tiplabels(tip = removed_ones, col = "red" , pch = 4) # add red X at tips (initial tree) which have been removed
   plot(drop.tip(save_tree, tip = removed_labels), show.tip.label = F,  # plot final tree
      main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
-dev.off()
+invisible(dev.off())
 # input-tree:
 pdf(paste(basepath, "/phylothinoutput/treecomparison_", tree_name, ".pdf", sep = ""))
   par(mfrow = c(1,2))
@@ -490,7 +492,7 @@ pdf(paste(basepath, "/phylothinoutput/treecomparison_", tree_name, ".pdf", sep =
   #tiplabels(tip = which(is.element(save_tree$tip.label, clades[!is.na(clades$clade),]$samples)), col = "blue" , pch = 1) # tips which belong to a oversampled clade
   plot(dropped_tree, show.tip.label = F, 
        main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
-dev.off()
+invisible(dev.off())
 
 # full input-tree
 pdf(paste(basepath, "/phylothinoutput/tree_", tree_name, ".pdf", sep = ""))
@@ -498,7 +500,7 @@ pdf(paste(basepath, "/phylothinoutput/tree_", tree_name, ".pdf", sep = ""))
        main = paste(num_removed, "of", length(save_tree$tip.label), "removed. ", warning),
        sub = tree_name)
   tiplabels(tip = removed_ones, col = "red" , pch = 4)
-dev.off()
+invisible(dev.off())
 
 ###################################################################################################################
 
