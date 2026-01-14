@@ -20,9 +20,11 @@ alpha_4 <- 0.9
 
 #### INPUT ########################################################################################################
 
-library(ape) # package for the analysis of phylogenetics and evolution
-library(phangorn) # for nnls.tree() and cophenetic.phylo()
-library(dplyr) # for near()
+suppressPackageStartupMessages({
+  library(ape) # package for the analysis of phylogenetics and evolution
+  library(phangorn) # for nnls.tree() and cophenetic.phylo()
+  library(dplyr) # for near()
+})
 
 # extract command-line arguments:
 args <- commandArgs(trailingOnly=TRUE)
@@ -117,6 +119,7 @@ if (pathd8==0){ # skip PATHd8 since requested by input
   if(class(um_tree)=="multiPhylo"){um_tree <- um_tree$`d8tree:`}
 }
 
+# CAUTION: lot of memory needed for the following (can be skipped if no priority list is given and no clade-output is needed)
 if (is.ultrametric(um_tree) == F){ # make the ultrametric tree really ultrametric (precision/rounding errors)
   um_tree <- nnls.tree(cophenetic(um_tree), um_tree, method = "ultrametric", 
                     rooted = is.rooted(um_tree), trace = 0)
@@ -145,6 +148,9 @@ save_tree <- um_tree # save the initial (ultrametric) tree
 
 ## scale the tree to coalescent based on T_i for i in a subset of {2, ..., k}
 
+if (is.binary(um_tree) == F){ # test if the tree is binary
+  um_tree <- multi2di(um_tree) # transform tree into binary by adding branches of length zero
+}
 num_start <- um_tree$Nnode+1 # number of nodes + 1 (m+1; binary tree = number of samples n)
 cintervals <- coalescent.intervals(um_tree) # information about coalescent intervals
                                            # (number of lineages, interval lengths, interval count, total depth)
@@ -218,7 +224,7 @@ pdf(paste(basepath, "/phylothinoutput/check/treecutting_", tree_name, ".pdf", se
   revcs_ctimes <- cumsum(rev(ctimes)) # cumulative sums for reversed ctimes (starting from root)
   plot(pgamma(revcs_ctimes,1:length(revcs_ctimes)), ylab = "pgamma(cumsum(choose(i,2) T_i))", 
        xlab = "summation starts from root") 
-dev.off()
+invisible(dev.off())
 
 ###################################################################################################################
 #### REMOVE SAMPLES ###############################################################################################
@@ -333,8 +339,9 @@ for (i in unique(clades[!is.na(clades$clade),]$clade)){
     distmatrix_red <- distmatrix[clade_keeper,setdiff(clade_ids,clade_keeper)] # relevant distances
     clade_removed_more_keeper <- c()
     if (length(setdiff(clade_ids,clade_keeper)) == 1){ # only one removed tip in clade
-      if (unique(distmatrix_red) > 1){
-        print("Error: Something went wrong in computing the clades.")
+      if (length(unique(distmatrix_red)) > 1){ # remove "unnecessary" keeper from clade
+        clades[clades$samples %in% names(distmatrix_red[distmatrix_red != min(distmatrix_red)]),]$clade <- NA
+        #print("Error: Something went wrong in computing the clades.")
       }
     } else {
     if (any(apply(distmatrix_red, 2, function(x) sum(x == min(x)) > 1))){
@@ -436,8 +443,8 @@ legend( x="topright",
         legend=c("T_i=0","T_i used for scaling","scaling factor",
                  "bound defined through f_i","bound defined through pgamma", "removed"), 
         col=c("black","blue","blue","green","darkgreen","red"), lwd=1,
-        lty=c(0,0,1,1,1,1), pch=c(1,16,26,26,26,4), merge=FALSE )
-dev.off() # close the plotting device
+        lty=c(0,0,1,1,1,1), pch=c(1,16,NA,NA,NA,4), merge=FALSE )
+invisible(dev.off()) # close the plotting device
 
 ###################################################################################################################
 #### OUTPUT #######################################################################################################
@@ -476,9 +483,9 @@ pdf(paste(basepath, "/phylothinoutput/um_treecomparison_", tree_name, ".pdf", se
   par(mfrow = c(1,2)) # create a 1 x 2 plotting matrix
   plot(save_tree, show.tip.label = F, main = warning, sub = tree_name) # plot initial tree
   tiplabels(tip = removed_ones, col = "red" , pch = 4) # add red X at tips (initial tree) which have been removed
-  plot(um_tree, show.tip.label = F,  # plot final tree
+  plot(drop.tip(save_tree, tip = removed_labels), show.tip.label = F,  # plot final tree
      main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
-dev.off()
+invisible(dev.off())
 # input-tree:
 pdf(paste(basepath, "/phylothinoutput/treecomparison_", tree_name, ".pdf", sep = ""))
   par(mfrow = c(1,2))
@@ -487,7 +494,7 @@ pdf(paste(basepath, "/phylothinoutput/treecomparison_", tree_name, ".pdf", sep =
   #tiplabels(tip = which(is.element(save_tree$tip.label, clades[!is.na(clades$clade),]$samples)), col = "blue" , pch = 1) # tips which belong to a oversampled clade
   plot(dropped_tree, show.tip.label = F, 
        main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
-dev.off()
+invisible(dev.off())
 
 # full input-tree
 pdf(paste(basepath, "/phylothinoutput/tree_", tree_name, ".pdf", sep = ""))
@@ -495,7 +502,7 @@ pdf(paste(basepath, "/phylothinoutput/tree_", tree_name, ".pdf", sep = ""))
        main = paste(num_removed, "of", length(save_tree$tip.label), "removed. ", warning),
        sub = tree_name)
   tiplabels(tip = removed_ones, col = "red" , pch = 4)
-dev.off()
+invisible(dev.off())
 
 ###################################################################################################################
 
