@@ -119,6 +119,7 @@ if (pathd8==0){ # skip PATHd8 since requested by input
   if(class(um_tree)=="multiPhylo"){um_tree <- um_tree$`d8tree:`}
 }
 
+# CAUTION: lot of memory needed for the following (can be skipped if no priority list is given and no clade-output is needed)
 if (is.ultrametric(um_tree) == F){ # make the ultrametric tree really ultrametric (precision/rounding errors)
   um_tree <- nnls.tree(cophenetic(um_tree), um_tree, method = "ultrametric", 
                     rooted = is.rooted(um_tree), trace = 0)
@@ -338,8 +339,9 @@ for (i in unique(clades[!is.na(clades$clade),]$clade)){
     distmatrix_red <- distmatrix[clade_keeper,setdiff(clade_ids,clade_keeper)] # relevant distances
     clade_removed_more_keeper <- c()
     if (length(setdiff(clade_ids,clade_keeper)) == 1){ # only one removed tip in clade
-      if (unique(distmatrix_red) > 1){
-        print("Error: Something went wrong in computing the clades.")
+      if (length(unique(distmatrix_red)) > 1){ # remove "unnecessary" keeper from clade
+        clades[clades$samples %in% names(distmatrix_red[distmatrix_red != min(distmatrix_red)]),]$clade <- NA
+        #print("Error: Something went wrong in computing the clades.")
       }
     } else {
     if (any(apply(distmatrix_red, 2, function(x) sum(x == min(x)) > 1))){
