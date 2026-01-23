@@ -440,7 +440,7 @@ points((num_start-num_removed+1):num_start,
          cintervals$interval.length[num_removed:1],
        pch = 4, col = "red") 
 legend( x="topright", 
-        legend=c("T_i=0","T_i used for scaling","scaling factor",
+        legend=c("T_i=0","T_i used for scaling",paste("scaling factor:",1/scaling),
                  "bound defined through f_i","bound defined through pgamma", "removed"), 
         col=c("black","blue","blue","green","darkgreen","red"), lwd=1,
         lty=c(0,0,1,1,1,1), pch=c(1,16,NA,NA,NA,4), merge=FALSE )
@@ -478,13 +478,16 @@ if (num_start - num_removed == 2){
 }else{
   warning = ""
 }
+text1 = paste(num_removed, "of", length(save_tree$tip.label), "removed (", round(100*num_removed/length(save_tree$tip.label)), "%).")
+text2 = paste(length(save_tree$tip.label)-num_removed, "remaining tips.")
+
 # ultrametric tree:
-pdf(paste(basepath, "/phylothinoutput/um_treecomparison_", tree_name, ".pdf", sep = ""))
+pdf(paste(basepath, "/phylothinoutput/check/um_treecomparison_", tree_name, ".pdf", sep = ""))
   par(mfrow = c(1,2)) # create a 1 x 2 plotting matrix
   plot(save_tree, show.tip.label = F, main = warning, sub = tree_name) # plot initial tree
   tiplabels(tip = removed_ones, col = "red" , pch = 4) # add red X at tips (initial tree) which have been removed
   plot(drop.tip(save_tree, tip = removed_labels), show.tip.label = F,  # plot final tree
-     main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
+     main = text1, sub = text2)
 invisible(dev.off())
 # input-tree:
 pdf(paste(basepath, "/phylothinoutput/treecomparison_", tree_name, ".pdf", sep = ""))
@@ -492,8 +495,7 @@ pdf(paste(basepath, "/phylothinoutput/treecomparison_", tree_name, ".pdf", sep =
   plot(input_tree, show.tip.label = F, main = warning, sub = tree_name)
   tiplabels(tip = removed_ones, col = "red" , pch = 4)
   #tiplabels(tip = which(is.element(save_tree$tip.label, clades[!is.na(clades$clade),]$samples)), col = "blue" , pch = 1) # tips which belong to a oversampled clade
-  plot(dropped_tree, show.tip.label = F, 
-       main = paste(num_removed, "of", length(save_tree$tip.label), "removed" ))
+  plot(dropped_tree, show.tip.label = F, main = text1, sub = text2)
 invisible(dev.off())
 
 # full input-tree

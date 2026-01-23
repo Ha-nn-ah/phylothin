@@ -90,13 +90,13 @@ Folder *phylothinoutput/*: every output of *PhyloThin* is stored in this folder.
 - *removed_ids.txt*: list of sample ids which should be removed for further analysis.
 - *kept_ids.txt*: list of sample ids which should be kept for further analysis.
 - *reduced_tree.nwk*: the (reduced) phylogenetic tree where biased samples are removed.
-- *um_treecomparison.pdf*: comparison of the full and reduced ultrametric, phylogenetic trees. Removed samples are marked with red crosses in the full ultrametric tree.
 - *treecomparison.pdf*: comparison of the full and reduced phylogenetic trees. Removed samples are marked with red crosses in the full tree.
 - *tree.pdf*: plot of the full tree where tips are labeled and removed samples are marked with red crosses.
 
 Folder *phylothinoutput/check/*: additional visualizations which may help to understand the decisions of *PhyloThin*. See *Supplementary Note 1* in the accompanying manuscript for further details.
 - *treecutting.pdf*
 - *scaling.pdf*
+- *um_treecomparison.pdf*: comparison of the full and reduced ultrametric, phylogenetic trees. Removed samples are marked with red crosses in the full ultrametric tree.
 
 ### Large Phylogenetic Trees - Subsampling
 
@@ -106,7 +106,7 @@ For very large sample sizes the mutation rate may not be high enough to allow a 
 Rscript phylothin_subsampling.r path_to_folder input_tree (-r number_of_subsamples) (-s subsample_size) (no_PATHd8)
 ```
 
-By default the number of subsamples is xxx and the size of each subsample is xxx.
+For details on the computations of the default parameter setting, see "Supplementary Note 1: PhyloThin – Implementation" in the accompanying manuscript.
 
 ## Test - Examples
 
@@ -119,4 +119,4 @@ Rscript phylothin.r ./Example um_ListeriaMonocytogenes.nwk no_PATHd8
 ```
 
 
-**Date: 28.07.2025**
+**Date: 23.01.2025**
