@@ -106,7 +106,7 @@ For very large sample sizes the mutation rate may not be high enough to allow a 
 Rscript phylothin_subsampling.r path_to_folder input_tree (-r number_of_subsamples) (-s subsample_size) (no_PATHd8)
 ```
 
-By default the number of subsamples is xxx and the size of each subsample is xxx.
+For details on the computations of the default parameter setting, see "Supplementary Note 1: PhyloThin – Implementation" in the accompanying manuscript.
 
 ## Test - Examples
 
@@ -119,4 +119,4 @@ Rscript phylothin.r ./Example um_ListeriaMonocytogenes.nwk no_PATHd8
 ```
 
 
-**Date: 20.01.2025**
+**Date: 23.01.2025**
